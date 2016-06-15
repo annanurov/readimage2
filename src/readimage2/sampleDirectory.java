@@ -21,6 +21,8 @@ public class sampleDirectory {
     public sampleDirectory(String dir) {
         this.directoryName = dir;
         this.directory = new File(this.directoryName);
+        System.out.println(dir);
+        
     }
 
     /**get method for Directory name
@@ -97,27 +99,30 @@ public class sampleDirectory {
      * (6) prepare extracted data in arff and cluto formats.
      */
     public void FT2D(){
-        File [] files = directory.listFiles();
+//        File [] files = directory.listFiles();
+        File [] files = this.getFiles(".jpg");
         ImgMod30 im30 = new ImgMod30();
     try{
         
         String REALoutputFileName = directoryName + "\\FT2D-REAL-1.txt";
             File REALoutputFile =  new File(REALoutputFileName);
                 PrintWriter REALpen = new PrintWriter(REALoutputFile);
-        String IMAGoutputFileName = directoryName + "\\FT2D-IMAG-1.txt";
-            File IMAGoutputFile =  new File(IMAGoutputFileName);
-                PrintWriter IMAGpen = new PrintWriter(IMAGoutputFile);
-        String AMPLoutputFileName = directoryName + "\\FT2D-AMPL-1.txt";
-            File AMPLoutputFile =  new File(AMPLoutputFileName);
-                PrintWriter AMPLpen = new PrintWriter(AMPLoutputFile);
+//        String IMAGoutputFileName = directoryName + "\\FT2D-IMAG-1.txt";
+//            File IMAGoutputFile =  new File(IMAGoutputFileName);
+//                PrintWriter IMAGpen = new PrintWriter(IMAGoutputFile);
+//        String AMPLoutputFileName = directoryName + "\\FT2D-AMPL-1.txt";
+//            File AMPLoutputFile =  new File(AMPLoutputFileName);
+//                PrintWriter AMPLpen = new PrintWriter(AMPLoutputFile);
         int counter = 1;
         for (File file : files){
                 BufferedImage image = ImageIO.read(file);
+                System.out.print("reading image...");
                 double [][] inputData  =  makeInputDataforFTT(image, 0);
                 double [][] realOut = new double[inputData.length][inputData[0].length];
                 double [][] imagOut = new double[inputData.length][inputData[0].length];
                 double [][] amplOut = new double[inputData.length][inputData[0].length];
                 ///apply FT2D:
+                System.out.print("FFT...");
                 im30.xform2D(inputData, realOut, imagOut, amplOut);
 
                 ///save images:
@@ -125,20 +130,22 @@ public class sampleDirectory {
 //                saveAsImage(imagOut, "FT2Dimages\\IMAG"+file.getName(), image.getType());
 //                saveAsImage(amplOut, "FT2Dimages\\AMPL"+file.getName(), image.getType());
                 
+        System.out.print("normalizing...");
         ///save data into files:
                 ///noralize first:
         int [][] NrealOut = normalizeSpectrum(realOut);
-        int [][] NimagOut = normalizeSpectrum(imagOut);
-        int [][] NamplOut = normalizeSpectrum(amplOut);
+        //int [][] NimagOut = normalizeSpectrum(imagOut);
+       //int [][] NamplOut = normalizeSpectrum(amplOut);
                 ///save now:
+                System.out.print("writing...");
                 for(int i = 0 ; i < amplOut.length; i++){
                     for(int j = 0 ; j < amplOut[0].length; j++){
 //                        REALpen.print(realOut[i][j] + " ");
                         REALpen.print(NrealOut[i][j] + " ");
 //                        IMAGpen.print(imagOut[i][j] + " ");
-                        IMAGpen.print(NimagOut[i][j] + " ");
+       //                 IMAGpen.print(NimagOut[i][j] + " ");
 //                        AMPLpen.print(amplOut[i][j] + " ");
-                        AMPLpen.print(NamplOut[i][j] + " ");
+         //               AMPLpen.print(NamplOut[i][j] + " ");
                     }
                 }//end of for, i
                 
@@ -152,17 +159,17 @@ public class sampleDirectory {
 //                    REALpen.println( fileName.substring(a+3, b) );
                     REALpen.println(fileName.substring(a + 1, b) );
 //                    IMAGpen.println( fileName.substring(a+3, b) );
-                    IMAGpen.println(fileName.substring(a + 1, b) );
+             //       IMAGpen.println(fileName.substring(a + 1, b) );
 //                    AMPLpen.println( fileName.substring(a+3, b) );
-                    AMPLpen.println(fileName.substring(a + 1, b) );
+             //       AMPLpen.println(fileName.substring(a + 1, b) );
 //                REALpen.print("\n");IMAGpen.print("\n");AMPLpen.print("\n");
 
 ///end of save as dato to files
-        System.out.print (" " + (counter++));
+        System.out.println ("\n" + this.directoryName + "\t" + (++counter));
         }//end of for, files
                 REALpen.close();
-                IMAGpen.close();
-                AMPLpen.close();
+//                IMAGpen.close();
+//                AMPLpen.close();
         }
             catch(Exception ex){ex.printStackTrace();}
     }
@@ -199,6 +206,7 @@ public class sampleDirectory {
     
     /**Normalize returned data*/
     private int[][] normalizeSpectrum(double[][] data){
+//        System.out.println("---Normalization");
         int[][] res = new int[data.length][data[0].length];
         double max = data[0][0];    
         double min = data[0][0];
