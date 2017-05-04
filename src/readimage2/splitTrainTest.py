@@ -27,9 +27,9 @@ for i in range(3):
 filename = "resized.csv"
 lines = file2lines(filename)
 training_lines = []
-training_lines_file_name = "resized_training.cvs"
+training_lines_file_name = "resized_training.csv"
 testing_lines = []
-test_lines_file_name = "resized_test.cvs"
+test_lines_file_name = "resized_test.csv"
 training_lines_file = open(training_lines_file_name, "w")
 test_lines_file = open(test_lines_file_name, "w")
 header = lines[0]
@@ -42,17 +42,33 @@ print (str(n))
 print (zeros  )
 
 a = makeRandomArray(n - zeros , zeros)
+newheader = ""
 
-training_lines_file.write(str(n - zeros)+ ", " + m + ", " + header[(x+2):])
-test_lines_file.write(str(zeros)+ ", " + m + ", " + header[(x+2):])
+for i in range(17):
+  newheader += ", " + str(i)
+  
+training_lines_file.write(str(n - zeros)+ ", " + m + newheader  + "\n")
+test_lines_file.write(str(zeros)+ ", " + m + newheader + "\n")
 
 for i in range(n):
+  line = lines[i + 1]
+  items = line.split(",")
+  c = int(items[-1]) - 16
+  
+  if (c > 16):
+    print c
+    print i
+  
+#  newline = line[:-2] + " " + str(c) + "\n"
+  newline = ",".join(items[:-1])
+  newline += ", " + str(c) + "\n"
+  
   if a[i]:
 #    training_lines.append(lines[i+1])
-    training_lines_file.write(lines[i+1])
+    training_lines_file.write(newline)
   else:
 #    testing_lines.append(lines[i+1])
-    test_lines_file.write(lines[i+1])
+    test_lines_file.write(newline)
 
 
 training_lines_file.close()
